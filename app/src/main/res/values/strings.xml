@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Hazy Installer</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_second">SecondActivity</string>
+    <string name="title_activity_tab1">tab1</string>
+    <string name="title_activity_tab2">tab2</string>
+    <string name="title_activity_tab3">tab3</string>
+    <string name="title_activity_master_tab">MasterTab</string>
+    <string name="title_activity_tab1_fragment">Tab1Fragment</string>
+    <string name="title_activity_tab2_fragment">Tab2Fragment</string>
+    <string name="title_activity_view_pager_manager">ViewPagerManager</string>
+    <string name="title_activity_pager_adapter">PagerAdapter</string>
+    <string name="title_activity_tab3_fragment">Tab3Fragment</string>
+    <string name="title_activity_done">Done</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+</resources>

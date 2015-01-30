@@ -1,0 +1,43 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--<item android:id="@android:id/background">
+        <shape>
+            <gradient
+                android:startColor="#B5B5B5"
+                android:centerColor="#B5B5B5"
+                android:centerY="1.0"
+                android:endColor="#B5B5B5"
+                android:angle="270"
+                />
+        </shape>
+    </item>
+
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape>
+                <gradient
+                    android:startColor="#234"
+                    android:centerColor="#234"
+                    android:centerY="0.75"
+                    android:endColor="#a24"
+                    android:angle="270"
+                    />
+            </shape>
+        </clip>
+    </item>-->
+
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape>
+                <gradient
+                    android:startColor="#A1A1A1"
+                    android:centerColor="#808080"
+                    android:centerY="0.75"
+                    android:endColor="#616161"
+                    android:angle="270"
+                    />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list><!-- From: file:/Users/Local/Desktop/HazyInstaller2/app/src/main/res/drawable/progress_bar.xml -->

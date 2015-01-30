@@ -1,0 +1,5 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="net.hazyrom.hazyinstaller.ViewPagerManager" >
+</menu>
+<!-- From: file:/Users/Local/Desktop/HazyInstaller2/app/src/main/res/menu/view_pager_manager.xml -->

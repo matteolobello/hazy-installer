@@ -1,0 +1,156 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_3"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#679f41"
+    tools:context="net.hazyrom.hazyinstaller.Tab3Fragment$PlaceholderFragment">
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:background="@drawable/progress_bar"
+        android:layout_below="@+id/textView"
+        android:layout_toEndOf="@+id/textView4"
+        android:layout_above="@+id/textView3"
+        android:layout_alignEnd="@+id/downloadTextView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Start the Download"
+        android:id="@+id/backingup"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Download Progress..."
+        android:id="@+id/textView3"
+        android:layout_above="@+id/textView2"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="0%"
+        android:id="@+id/downloadTextView"
+        android:layout_alignTop="@+id/textView3"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/downloadBanner"
+        android:src="@drawable/download"
+        android:layout_above="@+id/backingup"
+        android:minWidth="500px"
+        android:maxWidth="500px"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EXIT"
+        android:id="@+id/button"
+        android:onClick="exit"
+        android:background="@android:color/transparent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:layout_alignTop="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/indicator_yes"
+        android:layout_alignParentBottom="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView3"
+        android:src="@drawable/indicator_yes"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/imageView2"
+        android:layout_alignTop="@+id/imageView2" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView4"
+        android:layout_toEndOf="@+id/imageView2"
+        android:src="@drawable/indicator_no"
+        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@+id/imageView2" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView5"
+        android:src="@drawable/line"
+        android:layout_alignBottom="@+id/textView2"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="START"
+        android:id="@+id/button2"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        android:onClick="start_download"
+        android:layout_alignParentEnd="true" />
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:layout_toStartOf="@+id/button2"
+        android:layout_alignParentStart="true"
+        android:visibility="gone"
+        android:layout_alignEnd="@+id/downloadBanner"
+        android:layout_alignTop="@+id/downloadBanner"
+        android:layout_above="@+id/backingup" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="         "
+        android:id="@+id/textView"
+        android:layout_below="@+id/backingup"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="            "
+        android:id="@+id/textView2"
+        android:layout_above="@+id/button"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="\n"
+        android:id="@+id/textView4"
+        android:layout_above="@+id/progressBar"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

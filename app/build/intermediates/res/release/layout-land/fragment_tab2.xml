@@ -1,0 +1,132 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_2"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="#f47f1f"
+    tools:context="net.hazyrom.hazyinstaller.Tab2Fragment$PlaceholderFragment">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Backup your apps"
+        android:paddingLeft="30sp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:id="@+id/textView"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="We recommend you to backup\nall your apps before attempting\nthe installation of Hazy."
+        android:id="@+id/textView2"
+        android:paddingLeft="30sp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:textSize="16dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/checkBox"
+        android:checked="true"
+        android:button="@drawable/checkboxes"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/imageView4"
+        android:layout_alignStart="@+id/imageView4" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Backup my applications"
+        android:textSize="15dp"
+        android:id="@+id/textView3"
+        android:layout_toEndOf="@+id/imageView3"
+        android:layout_below="@+id/imageView"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text='You will make a backup of your apps. \nThey will be saved\nin the path "SD-Card/Hazy"'
+        android:id="@+id/textView4"
+        android:textSize="11dp"
+        android:layout_toEndOf="@+id/checkBox"
+        android:textColor="@android:color/white"
+        android:layout_below="@+id/textView3"
+        android:layout_alignStart="@+id/textView3" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:src="@drawable/backup"
+        android:layout_toEndOf="@+id/checkBox"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/textView"
+        android:minWidth="500px"
+        android:maxWidth="500px"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EXIT"
+        android:id="@+id/button"
+        android:onClick="exit"
+        android:background="@android:color/transparent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView2"
+        android:src="@drawable/indicator_no"
+        android:layout_centerHorizontal="true"
+        android:layout_alignTop="@+id/button"
+        android:layout_alignParentBottom="true" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView3"
+        android:src="@drawable/indicator_yes"
+        android:layout_toEndOf="@+id/imageView2"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/imageView5" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView4"
+        android:layout_toStartOf="@+id/imageView2"
+        android:src="@drawable/indicator_yes"
+        android:layout_below="@+id/imageView5"
+        android:layout_alignParentBottom="true" />
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView5"
+        android:background="@drawable/line"
+        android:scaleType="fitStart"
+        android:gravity="fill_horizontal"
+        android:adjustViewBounds="true"
+        android:layout_above="@+id/button"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
+<!-- From: file:/Users/Local/Desktop/HazyInstaller2/app/src/main/res/layout-land/fragment_tab2.xml -->
