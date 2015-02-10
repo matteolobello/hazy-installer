@@ -47,6 +47,10 @@ public class GetLinks {
                 this.s3DownloadROM = link;
             } else if (fileName.contains("nexus10")) {
                 this.nexus10DownloadROM = link;
+            } else if (fileName.contains("g2")) {
+                this.g2DownloadROM = link;
+            } else if (fileName.contains("g3")) {
+                this.g3DownloadROM = link;
             }
         } finally {
             br.close();
