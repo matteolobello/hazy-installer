@@ -1,21 +1,35 @@
 package net.hazyrom.hazyinstaller;
 
 // Android imports
-import android.app.*;
-import android.content.*;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.media.MediaScannerConnection;
-import android.net.*;
-import android.os.*;
-import android.support.v4.app.*;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.*;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
-import android.view.*;
-import android.view.animation.*;
-import android.widget.*;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
-// SuperToast Library import
+// SuperToast import
 import com.github.johnpersano.supertoasts.SuperToast;
 
 // Apache imports
@@ -23,9 +37,19 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 // Java imports
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Vector;
 
 public class ViewPagerManager extends FragmentActivity {
 
@@ -37,19 +61,21 @@ public class ViewPagerManager extends FragmentActivity {
     private static final String NEXUS10 = "Nexus 10";
     private static final String TAB = "p3100";
     private static final String ONEPLUSONE = "A0001";
-    private static final String G3 = "d855";
-    private static final String G2 = "d802";
+    private static final String G3 = "LG-D855";
+    private static final String G2 = "LG-D802";
+    private static final String S2 = "i9100";
 
     // Server links
-    private final String MAKO_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/mako";
-    private final String HAMMERHEAD_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/hammerhead";
-    private final String ONE_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/bacon";
-    private final String TAB_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/p3100";
-    private final String S3_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/i9300";
-    private final String MANTA_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/manta";
-    private final String G2_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/d802";
-    private final String G3_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/d855";
-    private final String GAPPS_REMOTE_PATH = "https://hazyrom.net/download/rom/extra/ota/gapps";
+    private final String MAKO_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/mako";
+    private final String HAMMERHEAD_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/hammerhead";
+    private final String ONE_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/bacon";
+    private final String TAB_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/p3100";
+    private final String S3_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/i9300";
+    private final String MANTA_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/manta";
+    private final String G2_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/d802";
+    private final String G3_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/d855";
+    private final String S2_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/i9100";
+    private final String GAPPS_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/gapps";
 
     // Download links
     private String s3DownloadROM;
@@ -60,6 +86,7 @@ public class ViewPagerManager extends FragmentActivity {
     private String nexus10DownloadROM;
     private String g2DownloadROM;
     private String g3DownloadROM;
+    private String s2DownloadROM;
     private String gappsDownloadLink;
 
     // File links
@@ -71,6 +98,7 @@ public class ViewPagerManager extends FragmentActivity {
     private String tabLinkFile = "/sdcard/HazyInstaller/tabLink";
     private String g2LinkFile = "/sdcard/HazyInstaller/g2Link";
     private String g3LinkFile = "/sdcard/HazyInstaller/g3Link";
+    private String s2LinkFile = "/sdcard/HazyInstaller/s2Link";
     private String gappsLinkFile = "/sdcard/HazyInstaller/gappsLink";
 
     // Animations
@@ -109,15 +137,14 @@ public class ViewPagerManager extends FragmentActivity {
 
     // Check Internet connection
     private boolean isConnectedToInternet(Context con) {
-        try {
-            ConnectivityManager connectivityManager = (ConnectivityManager) con.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-            if(mobileInfo.isConnected() || wifiInfo.isConnected()) {
-                return true;
-            }
-        } catch(Exception e) {}
-        return false;
+        ConnectivityManager connectivityManager = (ConnectivityManager) con.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifiInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobileInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if (mobileInfo.isConnected() || wifiInfo.isConnected())
+            return true;
+        else
+            return false;
     }
 
     // Device that user is using
@@ -140,6 +167,8 @@ public class ViewPagerManager extends FragmentActivity {
             return G2;
         } else if (CURRENT_DEVICE.equals(G3)) {
             return G3;
+        } else if (CURRENT_DEVICE.equals(S2)) {
+            return S2;
         } else {
             return "noDevice";
         }
@@ -151,30 +180,70 @@ public class ViewPagerManager extends FragmentActivity {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.viewpager_layout);
         this.initialisePaging();
+        init();
+    }
 
-        getActionBar().hide();
-
+    // Do initial stuff
+    private void init() {
+        hideActionBar();
         setStatusBarColor();
+        checkForSu();
+        checkForConnection();
+        downloadLinkFiles();
+        checkForFreeSpace();
+        makeLinksDir();
+        checkForLinks();
+    }
 
+    // Hide action bar
+    private void hideActionBar() {
+        getActionBar().hide();
+    }
+
+    // Set the StatusBar color (it'll be darker if user is on Lollipop)
+    private void setStatusBarColor() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
+    // Check for root
+    private void checkForSu() {
+        try {
+            Runtime.getRuntime().exec("su");
+        } catch (IOException e) {
+            deviceHasntRoot();
+        }
+    }
+
+    // Check for Internet connection
+    private void checkForConnection() {
         if (!isConnectedToInternet(getApplicationContext()))
             deviceHasntInternetConnection();
+    }
 
-        new DownloadSomeFiles().execute("");
-
+    // Check for free storage
+    private void checkForFreeSpace() {
         long freeSpace = sdCardFree();
         if (freeSpace < 300)
             lowSpaceOnDisk();
+    }
 
-        try {
-            Runtime.getRuntime().exec("su");
-        } catch (Exception e) {
-            deviceHasntRoot();
-        }
+    // Download files from website
+    private void downloadLinkFiles() {
+        new DownloadSomeFiles().execute("");
+    }
 
+    // Create backup directory
+    private void makeLinksDir() {
         File hazydir = new File("/sdcard/HazyInstaller");
         if (!hazydir.exists())
             hazydir.mkdir();
+    }
 
+    // Check links
+    private void checkForLinks() {
         try {
             onePlusOneDownloadROM = new GetLinks(oneLinkFile)
                     .onePlusOneDownloadROM;
@@ -192,64 +261,13 @@ public class ViewPagerManager extends FragmentActivity {
                     .g2DownloadROM;
             g3DownloadROM = new GetLinks(g3LinkFile)
                     .g3DownloadROM;
+            s2DownloadROM = new GetLinks(s2LinkFile)
+                    .s2DownloadROM;
             gappsDownloadLink = new GetLinks(gappsLinkFile)
                     .gappsDownloadLink;
-        } catch (Exception e) {}
-    }
-
-    // Set the StatusBar color (it'll be darker if user is on Lollipop)
-    private void setStatusBarColor() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
-
-    // Dialog for backing up apps
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case PROGRESSBAR_TYPE:
-                pDialog = new ProgressDialog(this);
-                pDialog.setMessage("Backing up your apps...\n\nWait please...");
-                pDialog.setCancelable(false);
-                pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                pDialog.show();
-                return pDialog;
-            default:
-                return null;
-        }
-    }
-
-    // Free space on disk
-    private long sdCardFree() {
-        File path = Environment.getExternalStorageDirectory();
-        StatFs stat = new StatFs(path.getPath());
-        int availBlocks = stat.getAvailableBlocks();
-        int blockSize = stat.getBlockSize();
-        long freeMemory = (long)availBlocks * (long)blockSize;
-        return freeMemory * 1048576;
-    }
-
-    // Layout
-    private void initialisePaging() {
-        List<Fragment> fragments = new Vector<Fragment>();
-        fragments.add(Fragment.instantiate(this, Tab1Fragment.class.getName()));
-        fragments.add(Fragment.instantiate(this, Tab2Fragment.class.getName()));
-        fragments.add(Fragment.instantiate(this, Tab3Fragment.class.getName()));
-        this.mPagerAdapter = new net.hazyrom.hazyinstaller.PagerAdapter(super
-                .getSupportFragmentManager(), fragments);
-        pager = (ViewPager)super.findViewById(R.id.viewpager);
-        pager.setAdapter(this.mPagerAdapter);
-
-        // FLOW, DEPTH, ZOOM, FADE, FAST_ENTER_FROM_CENTER, ROTATION, SLIDE_AND_FADE, SLIDE_OVER
-        pager.setPageTransformer(false, new ViewPagerAnimation(ViewPagerAnimation.TransformType.FADE));
-    }
-
-    // Exit button
-    public void exit(View v) {
-        if (userTapped == 0)
-            finish();
     }
 
     // Check device and run AsyncTask to download HazyROM
@@ -270,65 +288,10 @@ public class ViewPagerManager extends FragmentActivity {
             new DownloadFileFromURL().execute(g2DownloadROM);
         } else if (device().equals(G3)) {
             new DownloadFileFromURL().execute(g3DownloadROM);
+        } else if (device().equals(S2)) {
+            new DownloadFileFromURL().execute(s2DownloadROM);
         }
     }
-
-    // Start button
-    public void startDownload(View v) {
-        if (device().equals("noDevice"))
-            deviceNotSupported();
-        else {
-            superToast = new SuperToast(getApplicationContext());
-            superToast.setDuration(SuperToast.Duration.LONG);
-            superToast.setAnimations(SuperToast.Animations.FLYIN);
-            superToast.setText("Download Started!");
-            superToast.setIcon(SuperToast.Icon.Dark.SAVE, SuperToast.IconPosition.LEFT);
-            superToast.show();
-
-            gapps = (TextView) findViewById(R.id.gapps_progress);
-            gappsProgress = (TextView) findViewById(R.id.textView9);
-            progressBar2 = (ProgressBar) findViewById(R.id.gapps_progressbar);
-
-            progressTv = (TextView) findViewById(R.id.progresstv);
-            percentual = (TextView) findViewById(R.id.downloadTextView);
-            progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            start = (Button) findViewById(R.id.start);
-            exit = (Button) findViewById(R.id.exit);
-            checkBox = (CheckBox) findViewById(R.id.checkBox);
-
-            animationIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
-            animationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
-            animationFade = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out);
-
-            progressTv.startAnimation(animationIn);
-            progressTv.setVisibility(View.VISIBLE);
-
-            percentual.startAnimation(animationIn);
-            percentual.setVisibility(View.VISIBLE);
-
-            progressBar.startAnimation(animationOut);
-            progressBar.setVisibility(View.VISIBLE);
-
-            start.startAnimation(animationFade);
-            start.setVisibility(View.GONE);
-
-            exit.startAnimation(animationFade);
-            exit.setVisibility(View.INVISIBLE);
-
-            mustNotTap();
-
-            if (!checkBox.isChecked()) {
-                try {
-                    deviceCheckForDownload();
-                } catch (Exception e) {}
-            } else {
-                new BackupTask().execute("");
-            }
-        }
-    }
-
-    // Don't tap "start" on the first and the second fragment
-    public void dontTapStart(View v) {}
 
     // Lock third fragment
     private void mustNotTap() {
@@ -409,6 +372,113 @@ public class ViewPagerManager extends FragmentActivity {
                 }).show();
     }
 
+    // Display an enhanced toast
+    private void showSuperToast() {
+        superToast = new SuperToast(getApplicationContext());
+        superToast.setDuration(SuperToast.Duration.LONG);
+        superToast.setAnimations(SuperToast.Animations.FLYIN);
+        superToast.setText("Download Started!");
+        superToast.setIcon(SuperToast.Icon.Dark.SAVE, SuperToast.IconPosition.LEFT);
+        superToast.show();
+    }
+
+    // Free space on disk
+    private long sdCardFree() {
+        File path = Environment.getExternalStorageDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        int availBlocks = stat.getAvailableBlocks();
+        int blockSize = stat.getBlockSize();
+        long freeMemory = (long) availBlocks * (long) blockSize;
+        return freeMemory * 1048576;
+    }
+
+    // Dialog for backing up apps
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+            case PROGRESSBAR_TYPE:
+                pDialog = new ProgressDialog(this);
+                pDialog.setMessage("Backing up your apps...\n\nWait please...");
+                pDialog.setCancelable(false);
+                pDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                pDialog.show();
+                return pDialog;
+            default:
+                return null;
+        }
+    }
+
+    // Layout
+    private void initialisePaging() {
+        List<Fragment> fragments = new Vector<Fragment>();
+        fragments.add(Fragment.instantiate(this, Tab1Fragment.class.getName()));
+        fragments.add(Fragment.instantiate(this, Tab2Fragment.class.getName()));
+        fragments.add(Fragment.instantiate(this, Tab3Fragment.class.getName()));
+        this.mPagerAdapter = new net.hazyrom.hazyinstaller.PagerAdapter(super
+                .getSupportFragmentManager(), fragments);
+        pager = (ViewPager) super.findViewById(R.id.viewpager);
+        pager.setAdapter(this.mPagerAdapter);
+
+        // FLOW, DEPTH, ZOOM, FADE, FAST_ENTER_FROM_CENTER, ROTATION, SLIDE_AND_FADE, SLIDE_OVER
+        pager.setPageTransformer(false, new ViewPagerAnimation(ViewPagerAnimation.TransformType.FADE));
+    }
+
+    // Exit button
+    public void exit(View v) {
+        if (userTapped == 0)
+            finish();
+    }
+
+    // Start button
+    public void startDownload(View v) {
+        if (device().equals("noDevice"))
+            deviceNotSupported();
+        else {
+            showSuperToast();
+
+            gapps = (TextView) findViewById(R.id.gapps_progress);
+            gappsProgress = (TextView) findViewById(R.id.textView9);
+            progressBar2 = (ProgressBar) findViewById(R.id.gapps_progressbar);
+
+            progressTv = (TextView) findViewById(R.id.progresstv);
+            percentual = (TextView) findViewById(R.id.downloadTextView);
+            progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            start = (Button) findViewById(R.id.start);
+            exit = (Button) findViewById(R.id.exit);
+            checkBox = (CheckBox) findViewById(R.id.checkBox);
+
+            animationIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
+            animationOut = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
+            animationFade = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_out);
+
+            progressTv.startAnimation(animationIn);
+            progressTv.setVisibility(View.VISIBLE);
+
+            percentual.startAnimation(animationIn);
+            percentual.setVisibility(View.VISIBLE);
+
+            progressBar.startAnimation(animationOut);
+            progressBar.setVisibility(View.VISIBLE);
+
+            start.startAnimation(animationFade);
+            start.setVisibility(View.GONE);
+
+            exit.startAnimation(animationFade);
+            exit.setVisibility(View.INVISIBLE);
+
+            mustNotTap();
+
+            if (!checkBox.isChecked())
+                deviceCheckForDownload();
+            else
+                new BackupTask().execute("");
+        }
+    }
+
+    // Don't tap "start" on the first and the second fragment
+    public void dontTapStart(View v) {
+    }
+
     // AsyncTask to download link files
     private class DownloadSomeFiles extends AsyncTask<String, String, String> {
 
@@ -447,231 +517,244 @@ public class ViewPagerManager extends FragmentActivity {
                         .getEntity().writeTo(
                         new FileOutputStream(new File(g3LinkFile)));
 
+                new DefaultHttpClient().execute(new HttpGet(S2_REMOTE_PATH))
+                        .getEntity().writeTo(
+                        new FileOutputStream(new File(s2LinkFile)));
+
                 new DefaultHttpClient().execute(new HttpGet(GAPPS_REMOTE_PATH))
                         .getEntity().writeTo(
                         new FileOutputStream(new File(gappsLinkFile)));
-            } catch (Exception e) {}
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             return null;
         }
     }
 
-    // AsyncTask to backup all apks
-    private class BackupTask extends AsyncTask<String, String, String> {
+     // AsyncTask to backup all apks
+     private class BackupTask extends AsyncTask<String, String, String> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showDialog(PROGRESSBAR_TYPE);
-        }
+         @Override
+         protected void onPreExecute() {
+             super.onPreExecute();
+             showDialog(PROGRESSBAR_TYPE);
+         }
 
-        @Override
-        protected String doInBackground(String... strings) {
-            try {
-              String mountone[] = {"su", "-c", "mount -ro remount,rw /"};
-              String backup[] = {"su", "-c", "cp -av /data/app /sdcard/Hazy"};
+         @Override
+         protected String doInBackground(String... strings) {
+             String mountone[] = {"su", "-c", "mount -ro remount,rw /"};
+             String backup[] = {"su", "-c", "cp -av /data/app /sdcard/Hazy"};
 
-              File f = new File("/sdcard/Hazy");
-              if (!f.exists())
-                  f.mkdir();
+             File f = new File("/sdcard/Hazy");
+             if (!f.exists())
+                 f.mkdir();
 
-              Runtime.getRuntime().exec(mountone);
-              Runtime.getRuntime().exec(backup);
-            } catch (Exception e) {}
-            return null;
-        }
+             try {
+                 Runtime.getRuntime().exec(mountone);
+                 Runtime.getRuntime().exec(backup);
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+             return null;
+         }
 
-        @Override
-        protected void onPostExecute(String arg) {
-            super.onPostExecute("");
-            dismissDialog(PROGRESSBAR_TYPE);
-            Toast.makeText(getApplicationContext(), "Download Started", Toast.LENGTH_LONG).show();
-            try {
-                deviceCheckForDownload();
-            } catch (Exception e) {}
-        }
-    }
+         @Override
+         protected void onPostExecute(String arg) {
+             super.onPostExecute("");
+             dismissDialog(PROGRESSBAR_TYPE);
+             showSuperToast();
+             deviceCheckForDownload();
+         }
+     }
 
-    // Download HazyROM
-    private class DownloadFileFromURL extends AsyncTask<String, String, String> {
+     // Download HazyROM
+     private class DownloadFileFromURL extends AsyncTask<String, String, String> {
 
-        TextView downloadTextView;
+         TextView downloadTextView;
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            userTapped++;
-            progressBar = (ProgressBar)findViewById(R.id.progressBar);
-            downloadTextView = (TextView)findViewById(R.id.downloadTextView);
-        }
+         @Override
+         protected void onPreExecute() {
+             super.onPreExecute();
+             userTapped++;
+             progressBar = (ProgressBar) findViewById(R.id.progressBar);
+             downloadTextView = (TextView) findViewById(R.id.downloadTextView);
+         }
 
-        @Override
-        protected String doInBackground(String... f_url) {
-            int count;
-            try {
-                File rom = new File("/sdcard/HazyROM.zip");
-                if (rom.exists()) {
-                    rom.delete();
-                }
-                URL url = new URL(f_url[0]);
-                URLConnection conection = url.openConnection();
-                conection.connect();
-                final int lenghtOfFile = conection.getContentLength();
-                InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                OutputStream output = new FileOutputStream("/sdcard/HazyROM.zip");
-                byte data[] = new byte[1024];
-                long total = 0;
+         @Override
+         protected String doInBackground(String... f_url) {
+             int count;
+             try {
+                 File rom = new File("/sdcard/HazyROM.zip");
+                 if (rom.exists()) {
+                     rom.delete();
+                 }
+                 URL url = new URL(f_url[0]);
+                 URLConnection conection = url.openConnection();
+                 conection.connect();
+                 final int lenghtOfFile = conection.getContentLength();
+                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
+                 OutputStream output = new FileOutputStream("/sdcard/HazyROM.zip");
+                 byte data[] = new byte[1024];
+                 long total = 0;
+                 while ((count = input.read(data)) != -1) {
+                     total += count;
+                     String prgs = ("" + (int) ((total * 100) / lenghtOfFile));
+                     publishProgress(prgs);
+                     output.write(data, 0, count);
+                 }
+                 output.flush();
+                 output.close();
+                 input.close();
+             } catch (MalformedURLException e) {
+                 e.printStackTrace();
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
 
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    String prgs = ("" + (int) ((total * 100) / lenghtOfFile));
-                    publishProgress(prgs);
-                    output.write(data, 0, count);
-                }
-                output.flush();
-                output.close();
-                input.close();
+             return null;
+         }
 
-            } catch (Exception e) {}
+         @Override
+         protected void onProgressUpdate(String... progress) {
+             progressBar.setProgress(Integer.parseInt(progress[0]));
+             downloadTextView.setText(progress[0] + "%");
+         }
 
-            return null;
-        }
+         @Override
+         protected void onPostExecute(String file_url) {
+             super.onPostExecute("");
+             gapps.startAnimation(animationOut);
+             gapps.setVisibility(View.VISIBLE);
 
-        @Override
-        protected void onProgressUpdate(String... progress) {
-            progressBar.setProgress(Integer.parseInt(progress[0]));
-            downloadTextView.setText(progress[0] + "%");
-        }
+             gappsProgress.startAnimation(animationIn);
+             gappsProgress.setVisibility(View.VISIBLE);
 
-        @Override
-        protected void onPostExecute(String file_url) {
-            super.onPostExecute("");
-            gapps.startAnimation(animationOut);
-            gapps.setVisibility(View.VISIBLE);
+             progressBar2.startAnimation(animationOut);
+             progressBar2.setVisibility(View.VISIBLE);
 
-            gappsProgress.startAnimation(animationIn);
-            gappsProgress.setVisibility(View.VISIBLE);
+             new DownloadGappsFromURL().execute(gappsDownloadLink);
+         }
+     }
 
-            progressBar2.startAnimation(animationOut);
-            progressBar2.setVisibility(View.VISIBLE);
+     // Download HazyGApps
+     private class DownloadGappsFromURL extends AsyncTask<String, String, String> {
 
-            new DownloadGappsFromURL().execute(gappsDownloadLink);
+         @Override
+         protected void onPreExecute() {
+             super.onPreExecute();
+         }
 
-            Log.d("HAZY INSTALLER [ROM]", "Done!");
-        }
-    }
+         @Override
+         protected String doInBackground(String... f_url) {
+             int count;
+             try {
+                 File rom = new File("/sdcard/HazyGApps.zip");
+                 if (rom.exists()) {
+                     rom.delete();
+                 }
+                 URL url = new URL(f_url[0]);
+                 URLConnection conection = url.openConnection();
+                 conection.connect();
+                 int lenghtOfFile = conection.getContentLength();
+                 InputStream input = new BufferedInputStream(url.openStream(), 8192);
+                 OutputStream output = new FileOutputStream("/sdcard/HazyGApps.zip");
+                 byte data[] = new byte[1024];
+                 long total = 0;
 
-    // Download HazyGApps
-    private class DownloadGappsFromURL extends AsyncTask<String, String, String> {
+                 while ((count = input.read(data)) != -1) {
+                     total += count;
+                     String prgs = ("" + (int) ((total * 100) / lenghtOfFile));
+                     publishProgress(prgs);
+                     output.write(data, 0, count);
+                 }
+                 output.flush();
+                 output.close();
+                 input.close();
+             } catch (MalformedURLException e) {
+                 e.printStackTrace();
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+             return null;
+         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
+         @Override
+         protected void onProgressUpdate(String... progress) {
+             progressBar2.setProgress(Integer.parseInt(progress[0]));
+             gappsProgress.setText(progress[0] + "%");
+         }
 
-        @Override
-        protected String doInBackground(String... f_url) {
-            int count;
-            try {
-                File rom = new File("/sdcard/HazyGApps.zip");
-                if (rom.exists()) {
-                    rom.delete();
-                }
-                URL url = new URL(f_url[0]);
-                URLConnection conection = url.openConnection();
-                conection.connect();
-                int lenghtOfFile = conection.getContentLength();
-                InputStream input = new BufferedInputStream(url.openStream(), 8192);
-                OutputStream output = new FileOutputStream("/sdcard/HazyGApps.zip");
-                byte data[] = new byte[1024];
-                long total = 0;
+         @Override
+         protected void onPostExecute(String file_url) {
+             super.onPostExecute("");
+             new CopyScript().execute();
+         }
+     }
 
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    String prgs = ("" + (int) ((total * 100) / lenghtOfFile));
-                    publishProgress(prgs);
-                    output.write(data, 0, count);
-                }
-                output.flush();
-                output.close();
-                input.close();
-            } catch (Exception e) {}
-            return null;
-        }
+     // Install BusyBox, copy Script and reboot to Recovery mode
+     private class CopyScript extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected void onProgressUpdate(String... progress) {
-            progressBar2.setProgress(Integer.parseInt(progress[0]));
-            gappsProgress.setText(progress[0] + "%");
-        }
+         @Override
+         protected Void doInBackground(Void... voids) {
+             try {
+                 try {
+                     File traceFile = new File("/sdcard/openrecoveryscript");
+                     if (traceFile.exists()) {
+                         traceFile.delete();
+                         traceFile.createNewFile();
+                     }
+                     BufferedWriter writer = new BufferedWriter(new FileWriter(traceFile, true));
+                     writer.write("print \"Starting wipe...\"\n" +
+                             "wipe data\n" +
+                             "wipe cache\n" +
+                             "print \"#############################\"\n" +
+                             "print \"### HAZY ROM by HAZY TEAM ###\"\n" +
+                             "print \"#############################\"\n" +
+                             "install /sdcard/HazyROM.zip\n" +
+                             "install /sdcard/HazyGApps.zip\n" +
+                             "\n");
+                     writer.close();
+                     MediaScannerConnection.scanFile(getApplicationContext(),
+                             new String[]{traceFile.toString()},
+                             null,
+                             null);
 
-        @Override
-        protected void onPostExecute(String file_url) {
-            super.onPostExecute("");
-            new CopyScript().execute();
-        }
-    }
+                 } catch (IOException e) {
+                     e.printStackTrace();
+                 }
+                 Runtime.getRuntime().exec("su");
+                 String[] InstallBusyBoxCmd = new String[]{
+                         "su", "-c",
+                         "cat /sdcard/busybox &gt; /system/xbin/busybox;" +
+                                 "chmod 755 /system/xbin/busybox;" +
+                                 "busybox --install /system/xbin"
+                 };
+                 Runtime.getRuntime().exec(InstallBusyBoxCmd);
+                 Runtime.getRuntime().exec("mount -ro remount,rw /cache/recovery/");
+                 Runtime.getRuntime().exec("mount -ro remount,rw /cache/");
+                 Runtime.getRuntime().exec("mount -ro remount,rw /");
 
-    // Install BusyBox, copy Script and reboot to Recovery mode
-    private class CopyScript extends AsyncTask<Void, Void, Void> {
+                 File openrecovery = new File("/cache/recovery/openrecoveryscript");
+                 if (openrecovery.exists()) {
+                     openrecovery.delete();
+                 }
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                try {
-                    File traceFile = new File("/sdcard/openrecoveryscript");
-                    if (traceFile.exists()) {
-                        traceFile.delete();
-                        traceFile.createNewFile();
-                    }
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(traceFile, true));
-                    writer.write("print \"Starting wipe...\"\n" +
-                            "wipe data\n" +
-                            "wipe cache\n" +
-                            "print \"#############################\"\n" +
-                            "print \"### HAZY ROM by HAZY TEAM ###\"\n" +
-                            "print \"#############################\"\n" +
-                            "install /sdcard/HazyROM.zip\n" +
-                            "install /sdcard/HazyGApps.zip\n" +
-                            "\n");
-                    writer.close();
-                    MediaScannerConnection.scanFile(getApplicationContext(),
-                            new String[]{traceFile.toString()},
-                            null,
-                            null);
+                 String sSUCommand = "cp /sdcard/openrecoveryscript /cache/recovery/";
 
-                }
-                catch (IOException e) {}
-                Runtime.getRuntime().exec("su");
-                String[] InstallBusyBoxCmd = new String[] {
-                        "su", "-c",
-                        "cat /sdcard/busybox &gt; /system/xbin/busybox;" +
-                                "chmod 755 /system/xbin/busybox;" +
-                                "busybox --install /system/xbin"
-                };
-                Runtime.getRuntime().exec(InstallBusyBoxCmd);
-                Runtime.getRuntime().exec("mount -ro remount,rw /cache/recovery/");
-                Runtime.getRuntime().exec("mount -ro remount,rw /cache/");
-                Runtime.getRuntime().exec("mount -ro remount,rw /");
+                 String[] sCommand = {"su", "-c", sSUCommand};
+                 Runtime.getRuntime().exec(sCommand);
 
-                File openrecovery = new File("/cache/recovery/openrecoveryscript");
-                if (openrecovery.exists()) {
-                    openrecovery.delete();
-                }
-                String sSUCommand = "cp /sdcard/openrecoveryscript /cache/recovery/";
+                 String permissions[] = {"su", "-c", "chmod 777 /cache/recovery/openrecoveryscript"};
+                 Runtime.getRuntime().exec(permissions);
 
-                String[] sCommand = {"su", "-c", sSUCommand};
-                Runtime.getRuntime().exec(sCommand);
+                 String[] reboot = {"su", "-c", "reboot recovery"};
+                 Runtime.getRuntime().exec(reboot);
 
-                String permissions[] = {"su", "-c", "chmod 777 /cache/recovery/openrecoveryscript"};
-                Runtime.getRuntime().exec(permissions);
-
-                String[] reboot = {"su", "-c", "reboot recovery"};
-                Runtime.getRuntime().exec(reboot);
-
-                return null;
-            } catch (Exception e) {}
-
-            return null;
-        }
-    }
+                 return null;
+             } catch (IOException e) {
+                 e.printStackTrace();
+             }
+             return null;
+         }
+     }
 }
