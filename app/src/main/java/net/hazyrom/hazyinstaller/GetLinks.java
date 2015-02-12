@@ -1,17 +1,21 @@
 package net.hazyrom.hazyinstaller;
 
-import java.io.*;
+// Java imports
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class GetLinks {
 
     // Supported devices
     public String onePlusOneDownloadROM, s3DownloadROM,
             nexus5DownloadROM, tabDownloadROM, nexus4DownloadROM,
-            nexus10DownloadROM, g2DownloadROM, g3DownloadROM, gappsDownloadLink;
+            nexus10DownloadROM, g2DownloadROM, g3DownloadROM,
+            s2DownloadROM, gappsDownloadLink;
 
     // Used to read the files
-    private BufferedReader br;
-    private StringBuilder sb;
+    private BufferedReader bufferedReader;
+    private StringBuilder stringBuilder;
     private String line;
 
     // Constructor
@@ -21,17 +25,17 @@ public class GetLinks {
 
     // Get the link
     public void device(String fileName) throws IOException {
-        br = new BufferedReader(new FileReader(fileName));
+        bufferedReader = new BufferedReader(new FileReader(fileName));
         try {
-            sb = new StringBuilder();
-            line = br.readLine();
+            stringBuilder = new StringBuilder();
+            line = bufferedReader.readLine();
 
             while (line != null) {
-                sb.append(line);
-                sb.append("\n");
-                line = br.readLine();
+                stringBuilder.append(line);
+                stringBuilder.append("\n");
+                line = bufferedReader.readLine();
             }
-            String link = sb.toString();
+            String link = stringBuilder.toString();
 
             if (fileName.contains("nexus4")) {
                 this.nexus4DownloadROM = link;
@@ -45,15 +49,17 @@ public class GetLinks {
                 this.gappsDownloadLink = link;
             } else if (fileName.contains("s3")) {
                 this.s3DownloadROM = link;
-            } else if (fileName.contains("nexus10")) {
-                this.nexus10DownloadROM = link;
             } else if (fileName.contains("g2")) {
                 this.g2DownloadROM = link;
             } else if (fileName.contains("g3")) {
                 this.g3DownloadROM = link;
+            } else if (fileName.contains("nexus10")) {
+                this.nexus10DownloadROM = link;
+            } else if (fileName.contains("s2")) {
+                this.s2DownloadROM = link;
             }
         } finally {
-            br.close();
+            bufferedReader.close();
         }
     }
 }
