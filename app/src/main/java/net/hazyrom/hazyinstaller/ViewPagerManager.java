@@ -65,22 +65,16 @@ public class ViewPagerManager extends FragmentActivity {
     private static final String G3 = "LG-D855";
     private static final String G2 = "LG-D802";
     private static final String S2 = "i9100";
-<<<<<<< Updated upstream
-=======
     private static final String YU = "tomato";
     private static final String M8 = "m8";
     private static final String MOTOG2014 = "falcon";
     private static final String NOTE2 = "GT-N7100";
     private static final String FIND7 = "find7";
->>>>>>> Stashed changes
 
     // Server links
     private final String MAKO_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/mako";
     private final String HAMMERHEAD_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/hammerhead";
-<<<<<<< Updated upstream
-=======
     private final String SHAMU_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/shamu";
->>>>>>> Stashed changes
     private final String ONE_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/bacon";
     private final String TAB_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/p3100";
     private final String S3_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/i9300";
@@ -88,14 +82,11 @@ public class ViewPagerManager extends FragmentActivity {
     private final String G2_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/d802";
     private final String G3_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/d855";
     private final String S2_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/i9100";
-<<<<<<< Updated upstream
-=======
     private final String YU_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/tomato";
     private final String FIND7_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/find7";
     private final String M8_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/m8";
     private final String MOTG2014_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/motog2014";
     private final String NOTE2_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/n7100";
->>>>>>> Stashed changes
     private final String GAPPS_REMOTE_PATH = "http://hazyrom.net/download/rom/extra/ota/gapps";
 
     // Download links
@@ -109,14 +100,11 @@ public class ViewPagerManager extends FragmentActivity {
     private String g2DownloadROM;
     private String g3DownloadROM;
     private String s2DownloadROM;
-<<<<<<< Updated upstream
-=======
     private String yuDownloadROM;
     private String find7DownloadROM;
     private String m8DownloadROM;
     private String motoG2014DownloadROM;
     private String n7100DownloadROM;
->>>>>>> Stashed changes
     private String gappsDownloadLink;
 
     // File links
@@ -130,14 +118,11 @@ public class ViewPagerManager extends FragmentActivity {
     private String g2LinkFile = "/sdcard/HazyInstaller/g2Link";
     private String g3LinkFile = "/sdcard/HazyInstaller/g3Link";
     private String s2LinkFile = "/sdcard/HazyInstaller/s2Link";
-<<<<<<< Updated upstream
-=======
     private String yuLinkFile = "/sdcard/HazyInstaller/yuLink";
     private String find7LinkFile = "/sdcard/HazyInstaller/find7Link";
     private String m8LinkFile = "/sdcard/HazyInstaller/m8Link";
     private String motoG2014LinkFile = "/sdcard/HazyInstaller/motog2014Link";
     private String n7100LinkFile = "/sdcard/HazyInstaller/n7100Link";
->>>>>>> Stashed changes
     private String gappsLinkFile = "/sdcard/HazyInstaller/gappsLink";
 
     // Animations
@@ -208,10 +193,8 @@ public class ViewPagerManager extends FragmentActivity {
             return G2;
         } else if (CURRENT_DEVICE.equals(G3)) {
             return G3;
-<<<<<<< Updated upstream
         } else if (CURRENT_DEVICE.equals(S2)) {
             return S2;
-=======
         } else if (CURRENT_DEVICE.equals(YU)) {
             return YU;
         } else if (CURRENT_DEVICE.equals(S2)) {
@@ -224,7 +207,6 @@ public class ViewPagerManager extends FragmentActivity {
             return MOTOG2014;
         } else if (CURRENT_DEVICE.equals(NOTE2)) {
             return NOTE2;
->>>>>>> Stashed changes
         } else {
             return "noDevice";
         }
@@ -321,8 +303,6 @@ public class ViewPagerManager extends FragmentActivity {
                     .g3DownloadROM;
             s2DownloadROM = new GetLinks(s2LinkFile)
                     .s2DownloadROM;
-<<<<<<< Updated upstream
-=======
             yuDownloadROM = new GetLinks(yuLinkFile)
                     .yuDownloadROM;
             find7DownloadROM = new GetLinks(find7LinkFile)
@@ -333,7 +313,6 @@ public class ViewPagerManager extends FragmentActivity {
                     .motoG2014DownloadROM;
             n7100DownloadROM = new GetLinks(n7100LinkFile)
                     .n7100DownloadROM;
->>>>>>> Stashed changes
             gappsDownloadLink = new GetLinks(gappsLinkFile)
                     .gappsDownloadLink;
         } catch (IOException e) {
@@ -363,8 +342,6 @@ public class ViewPagerManager extends FragmentActivity {
             new DownloadFileFromURL().execute(g3DownloadROM);
         } else if (device().equals(S2)) {
             new DownloadFileFromURL().execute(s2DownloadROM);
-<<<<<<< Updated upstream
-=======
         } else if (device().equals(YU)) {
             new DownloadFileFromURL().execute(yuDownloadROM);
         } else if (device().equals(FIND7)) {
@@ -375,7 +352,6 @@ public class ViewPagerManager extends FragmentActivity {
             new DownloadFileFromURL().execute(m8DownloadROM);
         } else if (device().equals(NOTE2)) {
             new DownloadFileFromURL().execute(n7100DownloadROM);
->>>>>>> Stashed changes
         }
     }
 
@@ -608,14 +584,14 @@ public class ViewPagerManager extends FragmentActivity {
                         new FileOutputStream(new File(g3LinkFile)));
 
                 new DefaultHttpClient().execute(new HttpGet(S2_REMOTE_PATH))
-<<<<<<< Updated upstream
                         .getEntity().writeTo(
                         new FileOutputStream(new File(s2LinkFile)));
 
                 new DefaultHttpClient().execute(new HttpGet(GAPPS_REMOTE_PATH))
                         .getEntity().writeTo(
                         new FileOutputStream(new File(gappsLinkFile)));
-=======
+                        
+                new DefaultHttpClient().execute(new HttpGet(S2_REMOTE_PATH))
                         .getEntity().writeTo(
                         new FileOutputStream(new File(s2LinkFile)));
 
@@ -642,8 +618,6 @@ public class ViewPagerManager extends FragmentActivity {
                 new DefaultHttpClient().execute(new HttpGet(GAPPS_REMOTE_PATH))
                         .getEntity().writeTo(
                         new FileOutputStream(new File(gappsLinkFile)));
-
->>>>>>> Stashed changes
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -825,10 +799,6 @@ public class ViewPagerManager extends FragmentActivity {
                      }
                      BufferedWriter writer = new BufferedWriter(new FileWriter(traceFile, true));
                      writer.write("print \"Starting wipe...\"\n" +
-<<<<<<< Updated upstream
-=======
-                             "wipe system\n" +
->>>>>>> Stashed changes
                              "wipe data\n" +
                              "wipe cache\n" +
                              "print \"#############################\"\n" +
