@@ -9,16 +9,10 @@ public class GetLinks {
 
     // Supported devices
     public String onePlusOneDownloadROM, s3DownloadROM,
-<<<<<<< Updated upstream
-            nexus5DownloadROM, tabDownloadROM, nexus4DownloadROM,
-            nexus10DownloadROM, g2DownloadROM, g3DownloadROM,
-            s2DownloadROM, gappsDownloadLink;
-=======
             nexus5DownloadROM,nexus6DownloadROM, tabDownloadROM, nexus4DownloadROM,
             nexus10DownloadROM, g2DownloadROM, g3DownloadROM, s2DownloadROM,
             yuDownloadROM, find7DownloadROM, m8DownloadROM, motoG2014DownloadROM,
             n7100DownloadROM, gappsDownloadLink;
->>>>>>> Stashed changes
 
     // Used to read the files
     private BufferedReader bufferedReader;
@@ -66,8 +60,6 @@ public class GetLinks {
                 this.nexus10DownloadROM = link;
             } else if (fileName.contains("s2")) {
                 this.s2DownloadROM = link;
-<<<<<<< Updated upstream
-=======
             } else if (fileName.contains("yu")) {
                 this.yuDownloadROM = link;
             } else if (fileName.contains("m8")) {
@@ -76,7 +68,6 @@ public class GetLinks {
                 this.motoG2014DownloadROM = link;
             } else if (fileName.contains("n7100")) {
                 this.n7100DownloadROM = link;
->>>>>>> Stashed changes
             }
         } finally {
             bufferedReader.close();
