@@ -8,8 +8,8 @@ android {
         applicationId "net.hazyrom.hazyinstaller"
         minSdkVersion 19
         targetSdkVersion 20
-        versionCode 1
-        versionName "3.0"
+        versionCode 4
+        versionName "3.1"
     }
     buildTypes {
         release {
